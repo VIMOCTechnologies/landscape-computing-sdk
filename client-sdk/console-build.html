@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <!--
+    /* The MIT License (MIT)
+     *  
+     * Copyright (c) 2015 VIMOC Technologies
+     * 
+     * Permission is hereby granted, free of charge, to any person obtaining a copy
+     * of this software and associated documentation files (the "Software"), to deal
+     * in the Software without restriction, including without limitation the rights
+     * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+     * copies of the Software, and to permit persons to whom the Software is
+     * furnished to do so, subject to the following conditions:
+     * 
+     * The above copyright notice and this permission notice shall be included in
+     * all copies or substantial portions of the Software.
+     * 
+     * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+     * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+     * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+     * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+     * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+     * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+     * THE SOFTWARE.
+     *///////////////////////////////////////////////////////////////////////////////// -->
+
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1e4W1FUqy-WxLka-CE6mbYObz5c4BT7U&sensor=false" ></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="common.js"></script>
+    <style>
+        body { padding-top:30px; padding-left:30px; padding-right:30px; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+    <div class="panel panel-default">
+        <div class="panel-heading">Introduction to the VIMOC API SDK</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>Table of Contents</h5>
+                    <hr/>
+                    <p>Introduction</p>
+                    <p><a href="#apiinfo">API Description</a></p>
+                    <p><a href="#sitelistinfo">Get a list of all sites</a></p>
+                    <p><a href="#siteinfo">Query site information</a></p>
+                    <p><a href="#zoneinfo">Query zone information</a></p>
+                    <p><a href="#sensorinfo">Query sensor information</a></p>
+                    <p><a href="#sitestats">Query site statistics</a></p>
+                    <p><a href="#zonestats">Query zone statistics</a></p>
+                    <p><a href="#sensorstats">Query sensor statistics</a></p>
+                    <hr/>
+                </div>
+            </div>
+             <div class="row">
+                <div class="col-md-12">
+                    <p>VIMOC's Landscape Computing REST API provides functionality for third-party software to access 
+                    aggregated information and historical statistics for the sensors that form part of the Landscape 
+                    Computing Architecture. This provides functionality for accessing data related to a variety of 
+                    sensors (including parking sensors), and for performing queries on aggregated information about 
+                    logical groups of sensors. The REST API is built upon Apache tools, and supports queries of the 
+                    formats: TEXT/XML, APPLICATION/XML, and APPLICATION/JSON.</p>
+                    <section>
+                      <header>
+                        <h3>Essential Concepts</h3>
+                      </header>
+                      <p> Within the Landscape Computing Architecture, sensors are grouped into logical
+                        collections, according to their geographical location. There are two main concepts used
+                        for these groupings: sites and zones.
+                      </p><p>A site is a large-scale grouping collection of sensors, corresponding to a city, campus,
+                        parking station or other location. Each site typically has its own individual management and reporting,
+                        along with a distinct user-interface instance. Each site is composed of a number of zones. These are smaller groupings, consisting of,
+                        at most, a few dozen sensors. Each zone corresponds to an individual cluster of sensors, in
+                        a well-defined geographical area.</p>
+                      <p>Sensors exposed by the API are, in fact, “virtual” sensors, queried from individual physical sensors connected to nBoxes located
+                        on the Landscape Mesh. Each sensor, as seen by the API may actually correspond
+                        to a number of physical hardware sensors, with sensor processing being done on the “network edge”
+                        by nBoxes to provide more accurate, intelligent real-time data. Each zone and sensor can be
+                        queried to provide information, whether it be stored data, or calculated results.
+                      </p>
+                    </section>
+                    <section>
+                        <header>
+                          <h3>Architecture</h3>
+                          <p>The API Client SDK comes as a series of React.js Components.
+                             <quote><a href="https://facebook.github.io/react/">React.js</a> is an open source project from Facebook
+                             The instagram application is entirely built with React.js</quote>
+                             Components can be rendered 
+                             on the client as a traditional AJAX app (preferred) 
+                             on the server (e.g. SEO).
+                          </p>
+                          <p>
+                              The SDK's components follow the ReaCall <a href="https://bitbucket.org/jdubray/reacall">API SDK Architecture</a>. 
+                              These components are standard React components which can be embedded in any Web Application. Their properties matches the VIMOC API query parameters. For instance, the API call:
+                          </p>
+                          <code>
+                              
+                            &#13;site/{site}&#13;
+                              
+                          </code>
+                          <p>is realized with the following component:</p>
+                          <pre>
+    React.render(
+         &lt;SiteForm
+             site="{site}"
+          /&gt;,
+         document.getElementById('sites-form-container')
+    ) ; </pre>
+                          
+                          <p>Each component features five display modes:</p> 
+                              <ul>
+                              <li>info: renders the documentation of the API call(s) (<a href="#apiinfo">see below</a>)</li>
+                              <li>short: renders a “short” view of the component</li>
+                              <li>display: simple rendering with properties without calling “loadData()”
+                              <li>map: renders the component as a Google map</li>  
+                              <li>default: renders the component after invoking the API</li>  
+                              
+                              </ul>
+                              <p>Each components has three key methods:</p>
+                              <ul><li>render</li>
+                              <li>getInitialState</li>
+                              <li>loadData(query_parameters)</li>
+                              </ul>
+                              <p>The rendering itself is performed in a different component (a view). Views are stateless (properties only) React components. For instance the Sites component renders its data using the Site view:</p>
+<pre>
+    &lt;SiteView key={divid}
+        description={this.state.description}
+        id={this.state.id}
+        gpsCoord={this.state.gpsCoord}
+        timeZone={this.state.timeZone}
+        zones={this.state.zones} /&gt;
+        
+</pre>                              
+                          <p>You should not modify the API call components. Over time these components will be enhanced by the VIMOC team, but should for the most part remain compatible with the corresponding view interface.</p>
+                          
+                          <p>The views are the component you want to modify to adjust their output to your needs.</p>
+                          <p>The overall directory structure is as follows:</p>
+                          <img class="img-responsive" src="sdk-directory-structure.png" />
+                        </header>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">API Description</div>
+      <div class="panel-body">
+        <div id="api-descriptor-container">
+            component/api-descriptor.js [Overall]
+        </div>
+     </div>
+    </div>
+ 
+ <div class="panel panel-warning">
+   <div class="panel-heading">
+       
+      <a name="sitelistinfo"></a><div class="row">
+          <div class="col-md-6">
+              <h2 class="panel-title"><button type="button" class="btn btn-warning" disabled="disabled">/sites</button></h2>
+          </div>
+          <div class="col-md-6">
+              <div class="text-right">
+                  <a href="components/sitelist.js">components/sitelist.js</a><br/>
+                  <a href="views/sitelistview.js">views/sitelistview.js</a><br/>
+              </div>
+          </div>
+       </div>
+       
+    </div>
+   <div class="panel-body">
+     <div id="sitelist-container">
+           forms/sitelist.js
+     </div>
+   </div>
+ </div>
+   
+    
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+          
+         <a name="siteinfo"></a><div class="row">
+             <div class="col-md-6">
+                 <h2 class="panel-title"><button type="button" class="btn btn-warning" disabled="disabled">/site/{site}</button></h2>
+             </div>
+             <div class="col-md-6">
+                 <div class="text-right">
+                     <a href="components/sites.js">components/sites.js</a><br/>
+                     <a href="views/site.js">views/site.js</a><br/>
+                 </div>
+             </div>
+          </div>
+          
+       </div>
+      <div class="panel-body">
+        <div id="sites-form-container">
+              forms/siteform.js
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+          
+          <a name="zoneinfo"></a><div class="row">
+             <div class="col-md-6">
+                 <h2 class="panel-title"><button type="button" class="btn btn-warning" disabled="disabled">zone/{zone}</button></h2>
+             </div>
+             <div class="col-md-6">
+                 <div class="text-right">
+                     <a href="components/zones.js">components/zones.js</a><br/>
+                     <a href="views/zone.js">views/zone.js</a><br/>
+                 </div>
+             </div>
+          </div>
+
+      </div>
+      <div class="panel-body">
+        <div id="zones-form-container">
+              forms/zoneform.js
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+        <a name="sensorinfo"></a><div class="row">
+           <div class="col-md-6">
+               <h2 class="panel-title"><button type="button" class="btn btn-warning" disabled="disabled">sensor/{sensor}</button></h2>
+           </div>
+           <div class="col-md-6">
+               <div class="text-right">
+                   <a href="components/sensors.js">components/sensors.js</a><br/>
+                   <a href="views/sensor.js">views/sensor.js</a><br/>
+               </div>
+           </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div id="sensors-form-container">
+              forms/sensorform.js
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+          
+          
+        <div class="row">
+           <div class="col-md-6">
+               <h2 class="panel-title"><button type="button" class="btn btn-warning" disabled="disabled">/sensor/{sensor}/query/{query}</button></h2>
+           </div>
+           <div class="col-md-6">
+               <div class="text-right">
+                   <a href="components/sensorquery.js">components/sensorquery.js</a><br/>
+                   <a href="views/query.js">views/query.js</a><br/>
+               </div>
+           </div>
+        </div>
+          
+      </div>
+      <div class="panel-body">
+        <a name="sensorstats"></a><div id="sensorqueries-form-container">
+              forms/sensorqueryform.js
+        </div>
+        <h4>Sensor occupied (now)</h4>
+        <div id="sensorqueries-container1">
+            component/sensorqueries.js 
+        </div>
+        <h4>Sensor summary</h4>
+        <div id="sensorqueries-container2">
+            component/sensorqueries.js 
+        </div>
+        <h4>Average Duration</h4>
+        <div id="sensorqueries-container3">
+            component/sensorqueries.js 
+        </div>
+        <h4>Average Duration Daily</h4>
+        <div id="sensorqueries-container4">
+            component/sensorqueries.js 
+        </div>
+        <h4>Duration at Time</h4>
+        <div id="sensorqueries-container5">
+            component/sensorqueries.js 
+        </div>
+        <h4>Turnover</h4>
+        <div id="sensorqueries-container6">
+            component/sensorqueries.js 
+        </div>
+        <h4>Parking stays</h4>
+        <div id="sensorqueries-container7">
+            component/sensorqueries.js 
+        </div>
+        <h4>vacancy</h4>
+        <div id="sensorqueries-container8">
+            component/sensorqueries.js 
+        </div>
+        <h4>People count</h4>
+        <div id="sensorqueries-container9">
+            component/sensorqueries.js 
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+
+        <div class="row">
+           <div class="col-md-6">
+               <h2 class="panel-title"><button type="button" class="btn btn-warning" disabled="disabled">/zone/{zone}/query/{query}</button></h2>
+           </div>
+           <div class="col-md-6">
+               <div class="text-right">
+                   <a href="components/zonequery.js">components/zonequery.js</a><br/>
+                   <a href="views/query.js">views/query.js</a><br/>
+               </div>
+           </div>
+        </div>
+
+
+      </div>
+      <div class="panel-body">
+        <a name="zonestats"></a><div id="zonequeries-form-container">
+              forms/zonequeryform.js
+        </div>
+        <h4>Summary Daily</h4>
+        <div id="zonequeries-container1">
+            component/zonequeries.js 
+        </div>
+        <h4>Occupied Count</h4>
+        <div id="zonequeries-container2">
+            component/zonequeries.js 
+        </div>
+        <h4>Occupied Percent</h4>
+        <div id="zonequeries-container3">
+            component/zonequeries.js 
+        </div>
+        <h4>Average Duration</h4>
+        <div id="zonequeries-container4">
+            component/zonequeries.js 
+        </div>
+        <h4>Turnover</h4>
+        <div id="zonequeries-container5">
+            component/zonequeries.js 
+        </div>
+        <h4>Vacancy</h4>
+        <div id="zonequeries-container6">
+            component/zonequeries.js 
+        </div>
+      </div>
+    </div>
+
+
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+        
+          <div class="row">
+             <div class="col-md-6">
+                 <h2 class="panel-title"><button type="button" class="btn btn-warning" disabled="disabled">site/{site}/query/{query}</button></h2>
+             </div>
+             <div class="col-md-6">
+                 <div class="text-right">
+                     <a href="components/sitequery.js">components/sitequery.js</a><br/>
+                     <a href="views/query.js">views/sitelistqueryview.js</a><br/>
+                 </div>
+             </div>
+          </div>
+        
+        
+        </div>
+        <div class="panel-body">
+          <h4>Summary</h4>
+          <a name="sitestats"></a><div id="sitequeries-container1">
+              component/sitequeries.js 
+          </div>
+        </div>
+    </div>
+    
+</div> <!-- container -->
+
+    <script type="text/javascript" src="https://fb.me/react-with-addons-0.13.2.js"></script>
+    <script type="text/javascript" src="https://fb.me/JSXTransformer-0.13.2.js"></script>
+
+    <script type="text/javascript" src="components/util.js"></script>
+    <script type="text/javascript" src="build/components/dropdown.js"></script>
+    <script type="text/javascript" src="build/components/rowitemwrapper.js"></script>
+    <script type="text/javascript" src="build/components/querylistwrapper.js"></script>
+    
+    <script type="text/javascript" src="build/components/apidoc.js"></script>
+    <script type="text/javascript" src="build/components/apiinfo.js"></script>
+    
+    <script type="text/javascript" src="build/views/map.js"></script>
+    <script type="text/javascript" src="build/views/sensor.js"></script>
+    <script type="text/javascript" src="build/views/sensorqueryview.js"></script>
+    <script type="text/javascript" src="build/views/zone.js"></script>
+    <script type="text/javascript" src="build/views/zonequeryview.js"></script>
+    <script type="text/javascript" src="build/views/sitelistview.js"></script>
+    <script type="text/javascript" src="build/views/sitelistqueryview.js"></script>
+    <script type="text/javascript" src="build/views/site.js"></script>
+    <script type="text/javascript" src="build/views/query.js"></script>
+    <script type="text/javascript" src="build/views/shortsensor.js"></script>
+    <script type="text/javascript" src="build/views/shortzone.js"></script>
+    <script type="text/javascript" src="build/views/shortsite.js"></script>
+    <script type="text/javascript" src="build/views/shortsitelist.js"></script>
+    <script type="text/javascript" src="build/views/shortquery.js"></script>
+    
+    <script type="text/javascript" src="build/components/queries.js"></script>
+    <script type="text/javascript" src="build/components/sensors.js"></script>
+    <script type="text/javascript" src="build/components/zones.js"></script>
+    <script type="text/javascript" src="build/components/sites.js"></script>
+    <script type="text/javascript" src="build/components/sitelist.js"></script>
+    <script type="text/javascript" src="build/components/sensorquery.js"></script>
+    <script type="text/javascript" src="build/components/zonequery.js"></script>
+    <script type="text/javascript" src="build/components/sitequery.js"></script>
+    
+    <script type="text/javascript" src="build/forms/siteform.js"></script>
+    <script type="text/javascript" src="build/forms/zoneform.js"></script>
+    <script type="text/javascript" src="build/forms/sensorform.js"></script>
+    <script type="text/javascript" src="build/forms/sensorqueryform.js"></script>
+    <script type="text/javascript" src="build/forms/zonequeryform.js"></script>
+    
+    <script type="text/javascript" src="build/components/main.js">
+        
+        
+    </script>
+ 
+
+</body>
+</html>
+

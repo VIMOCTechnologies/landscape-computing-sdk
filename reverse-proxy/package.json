@@ -1,0 +1,31 @@
+{
+  "name": "VIMOCSampleReverseProxy",
+  "version": "1.0.0",
+  "description": "This is a simple reverse proxy that injects the API Key in every API request, before forwarding the request to the VIMOC server",
+  "author": "Jean-Jacques Dubray <jdubray@vimoctechnologies.com>",
+  "contributors": [{
+  "name": "Aaron Hector",
+  "email": "aaron@vimoctechnologies.com"
+}],
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/vimoctechnologies/http-proxy"
+},
+  "bugs": {
+  "url": "https://github.com/vimoctechnologies/http-proxy/issues"
+},
+  "keywords": [
+  "vimoc",
+  "api",
+  "proxy"
+],
+  "dependencies": {
+    "http-proxy": "1.11.x"
+  },
+  "preferGlobal": false,
+  "private": true,
+  "license": "copyright (c) 2015 VIMOC Technologies - All Rights Reserved"
+}
