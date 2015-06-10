@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Copyright 2015 - VIMOC Technologies - All Rights Reserved  -->
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Park Me!</title>
+    <style>
+      html, body, #map-canvas #map {
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        background-color: #bcd350;
+      }
+      
+      img.center {
+          position: relative;
+          top: -10%;
+          background-color: #bcd350;
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+      }
+      
+      #panel {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        margin-left: -180px;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+      }
+      
+      #results {
+        position: absolute;
+        top: 80%;
+        left: 20%;
+        margin-left: -180px;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1e4W1FUqy-WxLka-CE6mbYObz5c4BT7U&sensor=true" ></script>
+    
+    <!-- script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&key=AIzaSyA1e4W1FUqy-WxLka-CE6mbYObz5c4BT7U" --></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="../sdk/build/common.js"></script>
+  </head>
+  <body>
+      
+    <div id="map-canvas">
+        
+        <script type="text/javascript">
+            function setWidth(im){
+                $(im).width($(im).width()*$(document).height()*0.70/$(im).height()); 
+                $(im).height($(document).height()*0.70);
+            }
+            //onLoad="setWidth(this)"
+        </script>
+        
+        <img class="center" src="home.png" width="360"  />
+    </div>
+    <div id="zones">
+    </div>
+    
+    <div id="warnings_panel" style="width:100%;height:10%;text-align:center"></div>
+
+    
+    <script src="https://fb.me/react-with-addons-0.13.2.js"></script>
+    <!--<script src="https://fb.me/JSXTransformer-0.13.2.js"></script>-->
+    
+    <!-- SDK Components --> 
+    <script src="../sdk/build/components/util.js"></script>
+    <script src="../sdk/build/components/querylistwrapper.js"></script>
+    <script src="../sdk/build/components/rowitemwrapper.js"></script>
+    <script src="../sdk/build/components/zones.js"></script>
+    <script src="../sdk/build/components/sensorquery.js"></script>
+    <script src="../sdk/build/components/zonequery.js"></script>
+   
+    <!-- custom views --> 
+    <script src="build/zone.js"></script>
+    <script src="build/directions.js"></script>
+    <script src="build/main.js"></script>
+
+    <!-- script type="text/jsx" src="freespot.js"></script -->
+    
+    <script type="text/javascript">
+    
+        
+        //display home screen for 2 sec
+        setTimeout(function(){
+            navigator.geolocation.getCurrentPosition(success, error, options);
+        }, 2000);
+
+    </script>
+
+  </body>
+</html>
