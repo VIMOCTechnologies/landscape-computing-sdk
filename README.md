@@ -112,14 +112,57 @@ npm start
 
 It is recommended to use [pm2](https://github.com/Unitech/pm2) to deploy the proxy in a production environment. 
 
-## Demo App
+## Sample App
 
-The demo app is a single page application which delivers a "park me!" feature. When you are close to a zone, the app provides driving directions to a free parking spot. 
+The sample app is a single page application which delivers a "park me!" feature. When you are close to a zone, the app provides driving directions to a free parking spot. 
 
-* index.html works without a GPS sensor and emulates a request in the Palo Alto area
-* gps.html uses the device position to locate a partking spot nearby
+* index.html works without a GPS sensor and emulates a request in the Palo Alto site
+* gps.html uses the device position to locate a partking spot nearby (Palo Alto, Los Gatos, Newcastle)
 
-The main page collects the device position and instantiates a ZoneView component. The ZoneView component gather data from the closest zone, and attemps to find a free spot using the parkingsummary query (ZoneQueries).
+The main page collects the device position and instantiates a ZoneView component (zone.js). The ZoneView component gather data from the closest zone, and attemps to find a free spot using the parkingsummary query (ZoneQueries).
 
-Once the ZoneView has found a spot, it instantiates a Directions component which display the driving directions between the current position of the driver and the parking spot. 
- 
+```
+        <ZoneView
+            zone={zone.guid}
+            lat={userLatitude}
+            long={userLongitude}
+            latCenter={zoneLatitudeCenter}
+            longCenter={zoneLongitudeCenter}
+        />
+```
+
+ZoneView uses the Zones and ZoneQueries components of the SDK to fetch the data:
+
+```
+         <Zones key={this.props.zone}
+             zone={this.props.zone}
+             invisible={true}
+             callback={this.handleZones}
+         /> ;
+
+         <ZoneQueries
+             zone={this.props.zone}
+             query="parkingsummary"
+             callback={this.handleZoneSensors}
+             invisible={true}
+         /> ;
+```
+
+
+Once the ZoneView has found a spot, it instantiates a Directions component (directions.js) which display the driving directions between the current position of the driver and the parking spot. 
+
+```
+         if (parkingSpot.sensorId) {
+                res = <Directions
+                          key='map'
+                          zoom={17}
+                          latitude={this.props.lat}
+                          longitude={this.props.long}
+                          latCenter={this.props.latCenter}
+                          longCenter={this.props.longCenter}
+                          width={width}
+                          height={height}
+                          spot={parkingSpot}
+                      /> ;
+ 	 }
+```
